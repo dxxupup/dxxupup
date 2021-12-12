@@ -1,8 +1,8 @@
 package com.example.simple_smart_city.view;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -10,16 +10,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.simple_smart_city.Const;
 import com.example.simple_smart_city.bean_p.BannerBean;
 import com.example.simple_smart_city.databinding.ActivityLoginBinding;
-import com.youth.banner.adapter.BannerAdapter;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 
 import java.io.IOException;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     ActivityLoginBinding binding;
@@ -36,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            List<BannerBean.RowsDTO> finalRows = rows;
+            final List<BannerBean.RowsDTO> finalRows = rows;
             this.runOnUiThread(() -> {
                 binding.banner.setAdapter(new BannerImageAdapter<BannerBean.RowsDTO>(finalRows) {
                     @Override
