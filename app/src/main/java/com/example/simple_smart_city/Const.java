@@ -4,7 +4,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Const {
-    private static String IP = "http://192.168.1.18:10001";
+    private static String IP = "http://124.93.196.45:10091";
     private String TOKEN = "";
 
     public static String getIP() {
