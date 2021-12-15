@@ -36,68 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        API req = Const.getReq();
-        binding.serverList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false));
-        new Thread(() -> {
-            try {
-                List<ServerListBean.RowsDTO> serverListBean = req.serverList().execute().body().getRows();
-                runOnUiThread(() -> binding.serverList.setAdapter(new RecyclerView.Adapter<MyHolder>() {
-                    @NonNull
-                    @Override
-                    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        return new MyHolder(LayoutInflater.from(LoginActivity.this).inflate(R.layout.server_list, parent, false));
-                    }
-
-                    @Override
-                    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-                        holder.text.setText(serverListBean.get(position).getServiceName());
-                        Glide.with(LoginActivity.this).load(Const.getIP() + serverListBean.get(position).getImgUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(holder.img);
-                    }
-
-                    @Override
-                    public int getItemCount() {
-                        return serverListBean.size();
-                    }
-                }));
 
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-        // banner
-        new Thread(() -> {
-            List<BannerBean.RowsDTO> rows = null;
-            try {
-                rows = req.banner().execute().body().getRows();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            final List<BannerBean.RowsDTO> finalRows = rows;
-            runOnUiThread(() -> {
-                binding.banner.setAdapter(new BannerImageAdapter<BannerBean.RowsDTO>(finalRows) {
-                    @Override
-                    public void onBindView(BannerImageHolder holder, BannerBean.RowsDTO data, int position, int size) {
-                        Glide.with(holder.itemView)
-                                .load(Const.getIP() + data.getAdvImg())
-                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(30)))
-                                .into(holder.imageView);
-                    }
-                }).addBannerLifecycleObserver(this);
-            });
-        }).start();
-
-    }
-
-    private static class MyHolder extends RecyclerView.ViewHolder{
-        TextView text;
-        ImageView img;
-
-        public MyHolder(@NonNull View itemView) {
-            super(itemView);
-            text = itemView.findViewById(R.id.text);
-            img = itemView.findViewById(R.id.img);
-        }
     }
 }
