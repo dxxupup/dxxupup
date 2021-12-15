@@ -1,5 +1,6 @@
 package com.example.simple_smart_city.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.example.simple_smart_city.Const;
 import com.example.simple_smart_city.MainActivity;
 import com.example.simple_smart_city.R;
 import com.example.simple_smart_city.bean_p.BannerBean;
+import com.example.simple_smart_city.bean_p.ProjectBean;
 import com.example.simple_smart_city.bean_p.ServerListBean;
 import com.example.simple_smart_city.databinding.FragHomeBinding;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -34,6 +36,7 @@ public class HomeFragment extends Fragment {
 
     private FragHomeBinding binding;
     private MainActivity mainActivity;
+    private final API req = Const.getReq();
 
     @Nullable
     @Override
@@ -45,20 +48,65 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mainActivity = (MainActivity) view.getContext();
-        API req = Const.getReq();
-        binding.serverList.setLayoutManager(new LinearLayoutManager(mainActivity,LinearLayoutManager.HORIZONTAL, false));
+        initBanner();
+        initServerList();
+        initProject();
+    }
+
+    private void initProject() {
+        binding.project.setLayoutManager(new LinearLayoutManager(mainActivity, LinearLayoutManager.HORIZONTAL, false));
+        new Thread(() -> {
+            try {
+                List<ProjectBean.RowsDTO> rows = req.project().execute().body().getRows();
+
+                mainActivity.runOnUiThread(() -> {
+                    binding.project.setAdapter(new RecyclerView.Adapter<ProjectHolder>() {
+                        @NonNull
+                        @Override
+                        public ProjectHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                            return new ProjectHolder(LayoutInflater.from(mainActivity).inflate(R.layout.item_project, parent, false));
+                        }
+
+                        @Override
+                        public void onBindViewHolder(@NonNull ProjectHolder holder, int position) {
+                            holder.text.setText(rows.get(position).getTitle());
+                            Glide.with(mainActivity).load(Const.getIP() + rows.get(position).getCover()).apply(RequestOptions.bitmapTransform(new RoundedCorners(20))).into(holder.img);
+//                Intent intent = new Intent(context, NewsActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putString("type", "project");
+//                bundle.putSerializable("news", list.get(position));
+//                intent.putExtras(bundle);
+//                holder.img.setOnClickListener(v -> context.startActivity(intent));
+//                holder.text.setOnClickListener(v -> context.startActivity(intent));
+                        }
+
+                        @Override
+                        public int getItemCount() {
+                            return rows.size();
+                        }
+                    });
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+    }
+
+    private void initServerList() {
+        binding.serverList.setLayoutManager(new LinearLayoutManager(mainActivity, LinearLayoutManager.HORIZONTAL, false));
         new Thread(() -> {
             try {
                 List<ServerListBean.RowsDTO> serverListBean = req.serverList().execute().body().getRows();
-                mainActivity.runOnUiThread(() -> binding.serverList.setAdapter(new RecyclerView.Adapter<MyHolder>() {
+                mainActivity.runOnUiThread(() -> binding.serverList.setAdapter(new RecyclerView.Adapter<ServerListHolder>() {
                     @NonNull
                     @Override
-                    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        return new MyHolder(LayoutInflater.from(mainActivity).inflate(R.layout.server_list, parent, false));
+                    public ServerListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        return new ServerListHolder(LayoutInflater.from(mainActivity).inflate(R.layout.item_server, parent, false));
                     }
 
                     @Override
-                    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+                    public void onBindViewHolder(@NonNull ServerListHolder holder, int position) {
                         holder.text.setText(serverListBean.get(position).getServiceName());
                         Glide.with(mainActivity).load(Const.getIP() + serverListBean.get(position).getImgUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(holder.img);
                     }
@@ -74,8 +122,9 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
         }).start();
+    }
 
-        // banner
+    private void initBanner() {
         new Thread(() -> {
             List<BannerBean.RowsDTO> rows = null;
             try {
@@ -96,14 +145,24 @@ public class HomeFragment extends Fragment {
                 }).addBannerLifecycleObserver(this);
             });
         }).start();
-
     }
 
-    private static class MyHolder extends RecyclerView.ViewHolder{
+    private static class ServerListHolder extends RecyclerView.ViewHolder {
         TextView text;
         ImageView img;
 
-        public MyHolder(@NonNull View itemView) {
+        public ServerListHolder(@NonNull View itemView) {
+            super(itemView);
+            text = itemView.findViewById(R.id.text);
+            img = itemView.findViewById(R.id.img);
+        }
+    }
+
+    private static class ProjectHolder extends RecyclerView.ViewHolder {
+        TextView text;
+        ImageView img;
+
+        public ProjectHolder(@NonNull View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.text);
             img = itemView.findViewById(R.id.img);
