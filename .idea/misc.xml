@@ -3,8 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/moon/AndroidStudioProjects/simple_smart_city/app/src/main/res/layout/activity_login.xml" value="0.10190217391304347" />
+        <entry key="..\:/Users/moon/AndroidStudioProjects/simple_smart_city/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/Users/moon/AndroidStudioProjects/simple_smart_city/app/src/main/res/layout/activity_main.xml" value="0.10055724417426545" />
+        <entry key="..\:/Users/moon/AndroidStudioProjects/simple_smart_city/app/src/main/res/layout/server_list.xml" value="0.13768115942028986" />
       </map>
     </option>
   </component>
