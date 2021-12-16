@@ -22,5 +22,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.content, homeFragment).commitAllowingStateLoss();
         binding.hb1.setOnClickListener(v -> getSupportFragmentManager().beginTransaction().replace(R.id.content, homeFragment).commitAllowingStateLoss());
         binding.hb4.setOnClickListener(v -> getSupportFragmentManager().beginTransaction().replace(R.id.content, newsFrag).commitAllowingStateLoss());
+        binding.hb5.setOnClickListener(v -> getSupportFragmentManager().beginTransaction().replace(R.id.content, newsFrag).commitAllowingStateLoss());
     }
 }
